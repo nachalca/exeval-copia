@@ -48,6 +48,7 @@ exeval_ppk(
     "error_plot", "fit_class", "fit_histogram"),
   occ = NULL,
   signed = FALSE,
+  colors = NULL,
   ...
 )
 }
@@ -202,6 +203,10 @@ error values.
 \code{type = "fit_histogram"}.
 If \code{TRUE}, signed individual prediction errors are plotted.
 If \code{FALSE} (default), absolute individual prediction errors are used.}
+
+\item{colors}{Optional named character vector of colors for OCC categories.
+The names should correspond to the OCC values. If \code{NULL} (default),
+the \code{Dark2} palette is used.}
 }
 \value{
 An object of class \code{EvalPPK} containing:

@@ -631,7 +631,10 @@ summary.EvalPPK <- function(object,
 #' \code{type = "fit_histogram"}.
 #' If \code{TRUE}, signed individual prediction errors are plotted.
 #' If \code{FALSE} (default), absolute individual prediction errors are used.
-#'
+#' @param colors Optional named character vector of colors for OCC categories.
+#' The names should correspond to the OCC values. If `NULL` (default),
+#' the `Dark2` palette is used.
+#' 
 #' @param ... Additional arguments passed to or from other methods.
 #'
 #' @details
@@ -663,11 +666,20 @@ plot.EvalPPK <- function(x,
                            "fit_class",
                            "fit_histogram"
                                         ),
-                         occ = NULL, signed = FALSE, ...) {
+                         occ = NULL, signed = FALSE, 
+                         colors= NULL, ...) {
 
   type <- match.arg(type)
   mm <- x$metrics
   pp <- NULL
+  
+  if (is.null(colors)) {
+    occ_fill_scale <- ggplot2::scale_fill_brewer(palette = "Dark2")
+    occ_color_scale <- ggplot2::scale_color_brewer(palette = "Dark2")
+  } else {
+    occ_fill_scale <- ggplot2::scale_fill_manual(values = colors)
+    occ_color_scale <- ggplot2::scale_color_manual(values = colors)
+  }
 
 
   if (type == 'fit_class') {
@@ -745,7 +757,7 @@ plot.EvalPPK <- function(x,
       geom_col( ) +
       geom_errorbar(aes(ymin = rBIAS_lower, ymax = rBIAS_upper), width = 0.2) +
       geom_hline(data= data.frame(yy =c(-20, 20)), aes(yintercept= yy), linetype = "dashed", color='firebrick') +
-      scale_fill_brewer(palette = 'Dark2')
+      occ_fill_scale
   }
   else if (type == 'bias_pointrange') {
     pp <- mm[[2]] |>
@@ -754,7 +766,7 @@ plot.EvalPPK <- function(x,
       geom_errorbar(aes(ymin = rBIAS_lower, ymax = rBIAS_upper, color = OCC), width = 0.2) +
       geom_point(aes(color = OCC), size = 3) +
       geom_hline(yintercept = c(-20, 20), linetype = "dashed", color = 'firebrick', alpha = 0.7) +
-      scale_color_brewer(palette = "Dark2") +
+      occ_color_scale +
       theme_minimal() +
       labs(x = "OCC", y = "rBIAS (%)", color = "OCC") +
       theme(axis.text.x = element_text(angle = 45, hjust = 1))
@@ -764,13 +776,13 @@ plot.EvalPPK <- function(x,
       mutate(OCC = factor(OCC) ) |>
       ggplot (aes(x=OCC, y=MAIPE, fill=OCC)) + geom_col() +
       geom_hline(data= data.frame(yy =c(30)), aes(yintercept= yy), linetype = "dashed", color='firebrick') +
-      scale_fill_brewer(palette = 'Dark2')
+      occ_fill_scale
   } else if (type == 'bias_boxplot') {
     pp <-   mm[[1]] |>  # rBIAS_boxplot
       mutate(OCC = factor(OCC) ) |>
       ggplot (aes(x=OCC, y=IPE, fill=OCC)) + geom_boxplot() +
       geom_hline(data= data.frame(yy =c(-20, 20)), aes(yintercept= yy), linetype = "dashed", color='firebrick') +
-      scale_fill_brewer(palette = 'Dark2')
+      occ_fill_scale
 
   } else if (type == 'bias_dotplot') {
     pp <- mm[[1]] |>
@@ -779,7 +791,7 @@ plot.EvalPPK <- function(x,
       geom_jitter(width = 0.2, alpha = 0.6) +
       geom_hline(data = data.frame(yy = c(-20, 20)), aes(yintercept = yy),
                  linetype = "dashed", color = "firebrick") +
-      scale_color_brewer(palette = "Dark2") +
+      occ_color_scale +
       labs(y = "Individual Prediction Error (%)", title = "rBias dotplot")
   } else if (type == 'bias_density') {
     pp <- mm[[1]] |>
@@ -787,20 +799,20 @@ plot.EvalPPK <- function(x,
       ggplot(aes(x = IPE, fill = OCC)) +
       geom_density(alpha = 0.4) +
       geom_vline(xintercept = c(-20, 20), linetype = "dashed", color = "firebrick") +
-      scale_fill_brewer(palette = "Dark2") +
+      occ_fill_scale +
       labs(x = "Individual Prediction Error (%)", title = " Distribution of rBias per OCC")
   } else if (type == 'bias_violin') {
     pp <- mm[[1]] |> # rBIAS_violinplot
       mutate(OCC = factor(OCC) ) |>
       ggplot( aes(x=OCC, y=IPE, fill=OCC)) + geom_violin() +
-      scale_fill_brewer(palette = 'Dark2')
+      occ_fill_scale
   } else if (type ==  'IF20_plot') {
     pp <- mm[[2]] |> #  IF20_plot
       mutate(OCC = factor(OCC) ) |>
       ggplot(aes(x=OCC, y=IF20))+
       geom_col( aes(fill=OCC) )+
       geom_hline( aes(yintercept= 35), linetype = "dashed", colour= 'firebrick') +
-      scale_fill_brewer(palette = "Dark2")+
+      occ_fill_scale + 
       labs(title="IF20- Bayesian Forecasting",y="IF20(%)")+
       theme(plot.title = element_text(size = rel(1), colour = "black")) +
       theme(plot.title = element_text(size = 10, face = "bold"))
@@ -811,7 +823,7 @@ plot.EvalPPK <- function(x,
       ggplot(aes(x=OCC, y=IF30))+
       geom_col( aes(fill=OCC) )+
       geom_hline( aes(yintercept= 50), linetype = "dashed", colour= 'firebrick') +
-      scale_fill_brewer(palette = "Dark2")+
+      occ_fill_scale + 
       labs(title="IF30- Bayesian Forecasting",y="IF30(%)")+
       theme(plot.title = element_text(size = rel(1), colour = "black")) +
       theme(plot.title = element_text(size = 10, face = "bold"))
@@ -842,6 +854,7 @@ plot.EvalPPK <- function(x,
         panel.background = element_rect(fill = "white")
       ) + guides(fill = guide_legend(title.position = "top", nrow = 2, ncol = 3)) +
       facet_grid(rows = vars(dummy1)) +
+      occ_fill_scale +
       theme(
         panel.border = element_rect(color = "black", fill = NA, linewidth = 0.5),
         strip.background = element_rect(fill = "gray80", color = "black"),
@@ -869,6 +882,7 @@ plot.EvalPPK <- function(x,
         panel.background = element_rect(fill = "white")
       ) + guides(fill = guide_legend(title.position = "top", nrow = 2, ncol = 3)) +
       facet_grid(rows = vars(dummy2)) +
+      occ_fill_scale +
       theme(
         panel.border = element_rect(color = "black", fill = NA, linewidth = 0.5),
         strip.background = element_rect(fill = "gray80", color = "black"),
