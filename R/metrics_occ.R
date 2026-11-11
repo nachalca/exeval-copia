@@ -54,6 +54,10 @@
 #'
 #'   \item{metrics_means}{Data frame containing summary performance metrics
 #'   aggregated by occasion.}
+#'
+#'   \item{eval_type}{External evaluation strategy used to generate the
+#'   simulations; \code{combine_metrics()} uses it to check that models are
+#'   comparable.}
 #' }
 #' 
 #' @seealso [run_pk_simulations()], [plot.EvalPPK()], [summary.EvalPPK()]
@@ -204,7 +208,8 @@ metrics_occ <- function(simulations,
 
   return(
     list(metrics = metrics,
-         metrics_means = metrics_means
+         metrics_means = metrics_means,
+         eval_type = evaluation_type
     )
   )
 
