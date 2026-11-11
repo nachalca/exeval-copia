@@ -80,12 +80,12 @@ function(map_results, evaluation_type = c("sequential_updating",
                                                 "sequential_reference_updating",
                                                 "backward_reference_updating")) {
 
+  # Evaluationtype :
+  evaluation_type <- match.arg(evaluation_type)
+
   if ( map_results$eval_type != evaluation_type) {
     stop(" Select the same evaluation type used in run_map")
   }
-
-  # Evaluationtype :
-  evaluation_type <- match.arg(evaluation_type)
 
   # list for save estimations
   posterior_estimations <- list()
