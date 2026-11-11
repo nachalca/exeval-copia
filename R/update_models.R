@@ -158,6 +158,12 @@ function(map_results, evaluation_type = c("sequential_updating",
   }
 
   else if (evaluation_type=="backward_reference_updating") {
+    occ_ref <- map_results$occ_ref
+    if (is.null(occ_ref)) {
+      stop("map_results must contain 'occ_ref' for backward_reference_updating; ",
+           "re-run run_MAP_estimations() with occ_ref.", call. = FALSE)
+    }
+
     for (i in 1:(num_estimations)) {
 
       previous_numbers <- paste0((occ_ref-1):i, collapse = "_")
