@@ -282,13 +282,7 @@ function(model, model_name= NULL,
         list_ttos[[vector_ttos]] <- filtered_data|>filter(OCC == n)
 
         # contruct events per tto and ID
-        num_ids_ttos <- length(unique(list_ttos[[vector_ttos]]$ID))
-        lista_ttos_occ <- list()
-        for (ids in 1:num_ids_ttos) {
-          vector_eventos <- paste0("ev.tto.occ", n, "_ID", ids)
-          lista_ttos_occ[[vector_eventos]] <- list_ttos[[vector_ttos]] |>
-            filter(ID == ids)
-        }
+        lista_ttos_occ <- build_id_events(list_ttos[[vector_ttos]], n)
 
         # save tto list
         list_ttos[[paste0("tto_occ_", n)]] <- lista_ttos_occ
@@ -299,13 +293,7 @@ function(model, model_name= NULL,
       list_ttos[[vector_ttos]] <- filtered_data|>filter(OCC == occ_ref)
 
       # contruct events per tto and ID
-      num_ids_ttos <- length(unique(list_ttos[[vector_ttos]]$ID))
-      lista_ttos_occ <- list()
-      for (ids in 1:num_ids_ttos) {
-        vector_eventos <- paste0("ev.tto.occ", occ_ref, "_ID", ids)
-        lista_ttos_occ[[vector_eventos]] <- list_ttos[[vector_ttos]] |>
-          filter(ID == ids)
-      }
+      lista_ttos_occ <- build_id_events(list_ttos[[vector_ttos]], occ_ref)
 
       # save tto
       list_ttos[[paste0("tto_occ_", occ_ref)]] <- lista_ttos_occ
@@ -318,13 +306,8 @@ function(model, model_name= NULL,
           list_ttos[[vector_ttos]] <- filtered_data|>filter(OCC <= n)
 
           # Generate treatment/event datasets for each individual
-          num_ids_ttos <- length(unique(list_ttos[[vector_ttos]]$ID))
-          lista_ttos_occ <- list()
-          for (ids in 1:num_ids_ttos) {
-            vector_eventos <- paste0("ev.tto.occ", n, "_ID", ids)
-            lista_ttos_occ[[vector_eventos]] <- list_ttos[[vector_ttos]] |>
-              filter(ID == ids)  # Keep all records to preserve simulation time points
-          }
+          # Keep all records to preserve simulation time points
+          lista_ttos_occ <- build_id_events(list_ttos[[vector_ttos]], n)
 
           # Save treatments by OCC
           list_ttos[[paste0("tto_occ_", n)]] <- lista_ttos_occ
@@ -335,13 +318,8 @@ function(model, model_name= NULL,
         list_ttos[[vector_ttos]] <- filtered_data|>filter(OCC == occ_ref)
 
         # Generate treatment/event datasets for each individual
-        num_ids_ttos <- length(unique(list_ttos[[vector_ttos]]$ID))
-        lista_ttos_occ <- list()
-        for (ids in 1:num_ids_ttos) {
-          vector_eventos <- paste0("ev.tto.occ", occ_ref, "_ID", ids)
-          lista_ttos_occ[[vector_eventos]] <- list_ttos[[vector_ttos]] |>
-            filter(ID == ids) # Keep all records to preserve simulation time points
-        }
+        # Keep all records to preserve simulation time points
+        lista_ttos_occ <- build_id_events(list_ttos[[vector_ttos]], occ_ref)
 
         # Save treatments by OCC
         list_ttos[[paste0("tto_occ_", occ_ref)]] <- lista_ttos_occ
@@ -359,13 +337,7 @@ function(model, model_name= NULL,
       list_apriori[[vector_ttos]] <- apriori_data
 
       # construct events per tto and id
-      num_ids_apriori <- length(unique(list_apriori[[vector_ttos]]$ID))
-      lista_ttos_apriori_occ <- list()
-      for (ids in 1:num_ids_ttos) {
-        vector_eventos <- paste0("ev.tto.occ", occ_apriori, "_ID", ids)
-        lista_ttos_apriori_occ[[vector_eventos]] <- apriori_data |>
-          filter(ID == ids)
-      }
+      lista_ttos_apriori_occ <- build_id_events(apriori_data, occ_apriori)
 
       # save tto
       list_apriori[[paste0("apriori_occ_", occ_apriori)]] <- lista_ttos_apriori_occ

@@ -330,3 +330,13 @@ screen_fit <- function(x,
 }
 
 
+
+# Split a treatment/event data frame into one data frame per subject.
+# Elements are named "ev.tto.occ<occ>_ID<id>" using the actual ID values
+# (IDs need not be 1..N), in order of first appearance.
+build_id_events <- function(df, occ) {
+  ids <- unique(df$ID)
+  events <- split(df, factor(df$ID, levels = ids))
+  names(events) <- paste0("ev.tto.occ", occ, "_ID", ids)
+  events
+}
