@@ -42,6 +42,10 @@ fit classifications for each subject, occasion, and observation time.}
 
 \item{metrics_means}{Data frame containing summary performance metrics
 aggregated by occasion.}
+
+\item{eval_type}{External evaluation strategy used to generate the
+simulations; \code{combine_metrics()} uses it to check that models are
+comparable.}
 }
 }
 \description{
