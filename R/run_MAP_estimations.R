@@ -189,7 +189,7 @@ function(model, model_name= NULL,
       }
     }
     # more checks
-    check_OCC_capture(model)
+    check_OCC_capture(my_model)
 
     # check OCC and CMT exist in the external dataset
     if (!"OCC" %in% names(data)) {
