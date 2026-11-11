@@ -158,18 +158,20 @@ function(model, model_name= NULL,
   evaluation_type <- match.arg(evaluation_type)
   method <- match.arg(method)
 
-  # check data has the required columns
+  # check occ_ref is consistent with the evaluation strategy
   if (!is.null(occ_ref) && !is.null(num_occ) && occ_ref != num_occ) {
     stop("occ_ref and num_occ must have the same value if both are specified.")
   }
 
-  if (!is.null(occ_ref) && !is.null(num_occ) && occ_ref != num_occ) {
-    stop("occ_ref and num_occ must have the same value if both are specified.")
+  uses_reference <- evaluation_type %in% c("sequential_reference_updating",
+                                           "backward_reference_updating")
+
+  if (!is.null(occ_ref) && !uses_reference) {
+    stop("occ_ref must be used with evaluation type sequential_reference_updating or backward_reference_updating")
   }
 
-  if (!is.null(occ_ref) && (evaluation_type =="sequential_updating" || evaluation_type ==
-                            "stepwise_updating")) {
-    stop("occ_ref must be used wwith evaluation type sequential_reference_updating or backward_reference_updating")
+  if (is.null(occ_ref) && uses_reference) {
+    stop("occ_ref must be supplied when evaluation_type is ", evaluation_type, ".")
   }
 
   if (tool == "mapbayr") {
@@ -214,6 +216,14 @@ function(model, model_name= NULL,
       num_occ <- min(num_occ, length(unique(data$OCC)))
     }
 
+    # at least two occasions are needed: one to estimate, one to forecast
+    if (num_occ < 2) {
+      stop("The data must contain at least 2 occasions (OCC) to evaluate predictions.")
+    }
+    if (!is.null(occ_ref) && (occ_ref < 2 || occ_ref > num_occ)) {
+      stop("occ_ref must be between 2 and ", num_occ, " (number of occasions).")
+    }
+
     # number of IDs
     if (is.null(num_ids)) {
       num_ids <- length(unique(data$ID))
@@ -245,7 +255,7 @@ function(model, model_name= NULL,
     
     else if (evaluation_type=="stepwise_updating")
     {
-      for (i in 1:(num_occ-1)) {
+      for (i in seq_len(num_occ - 1)) {
         
         first_occ <- max(1, i-history_occ+1)
         last_occ  <- i
@@ -261,14 +271,14 @@ function(model, model_name= NULL,
 
     else if (evaluation_type=="sequential_reference_updating")
     {
-      for (i in 1:occ_ref) {
+      for (i in seq_len(occ_ref)) {
         nombre_vector <- paste0("dfOCC", i)
         list_df_basedata[[nombre_vector]] <- filtered_data|>filter(OCC <= i)
       }
 
     }
     else if (evaluation_type== "backward_reference_updating")
-      for (i in occ_ref:1) {
+      for (i in rev(seq_len(occ_ref))) {
         nombre_vector <- paste0("dfOCC", i)
         list_df_basedata[[nombre_vector]] <- filtered_data|>filter(OCC <= i)
       }
@@ -277,7 +287,7 @@ function(model, model_name= NULL,
     # add an if else sentece if data has ss or not , then how to compute ev tables
     if("SS" %in% names(data)|| "ss" %in% names(data)) {
     if (is.null(occ_ref)) {
-      for (n in 2:num_occ) {
+      for (n in seq(2, num_occ)) {
         vector_ttos <- paste0("tto_", n)
         list_ttos[[vector_ttos]] <- filtered_data|>filter(OCC == n)
 
@@ -301,7 +311,7 @@ function(model, model_name= NULL,
     }
     else {
       if (is.null(occ_ref)) {
-        for (n in 2:num_occ) {
+        for (n in seq(2, num_occ)) {
           vector_ttos <- paste0("tto_", n)
           list_ttos[[vector_ttos]] <- filtered_data|>filter(OCC <= n)
 
@@ -346,7 +356,7 @@ function(model, model_name= NULL,
     list_map <- list()
 
     if(evaluation_type=="sequential_updating") {
-      for (j in 1:(num_occ - 1)) {
+      for (j in seq_len(num_occ - 1)) {
         previous_numbers <- paste0(1:j, collapse = "_")
         map.result <- paste0("map.estimation.occ_0_",previous_numbers)
         list_map[[map.result]] <- mapbayr::mapbayest(my_model,
@@ -356,7 +366,7 @@ function(model, model_name= NULL,
     }
 
     else if (evaluation_type== "stepwise_updating")  {
-      for (j in 1:(num_occ - 1)) {
+      for (j in seq_len(num_occ - 1)) {
         map.result <- paste0("map.estimation.occ_", j)
         list_map[[map.result]] <- mapbayr::mapbayest(my_model,
                                                      data = list_df_basedata[[paste0("dfOCC", j)]],
@@ -364,7 +374,7 @@ function(model, model_name= NULL,
       }
     }
     else if (evaluation_type== "sequential_reference_updating")  {
-      for (j in 1:(occ_ref - 1)) {
+      for (j in seq_len(occ_ref - 1)) {
         previous_numbers <- paste0(1:j, collapse = "_")
         map.result <- paste0("map.estimation.occ_0_",previous_numbers)
         list_map[[map.result]] <- mapbayr::mapbayest(my_model,
@@ -373,7 +383,7 @@ function(model, model_name= NULL,
       }
     }
     else if (evaluation_type== "backward_reference_updating")  {
-      for (j in (occ_ref - 1):1) {
+      for (j in rev(seq_len(occ_ref - 1))) {
         previous_numbers <- paste0((occ_ref-1):j, collapse = "_")
         map.result <- paste0("map.estimation.occ_",previous_numbers)
         list_map[[map.result]] <- mapbayr::mapbayest(my_model,

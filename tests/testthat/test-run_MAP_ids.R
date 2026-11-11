@@ -1,13 +1,3 @@
-run_map_mocked <- function(...) {
-  testthat::local_mocked_bindings(mapbayest = function(...) "fake_est",
-                                  .package = "mapbayr",
-                                  .env = parent.frame())
-  suppressMessages(run_MAP_estimations(
-    model = occ_model_code(), model_name = "occ_ids",
-    check_compile = FALSE, ...
-  ))
-}
-
 # every element must hold only the rows of the ID named in it
 expect_events_match_ids <- function(events, occ, ids) {
   expect_named(events, paste0("ev.tto.occ", occ, "_ID", ids))

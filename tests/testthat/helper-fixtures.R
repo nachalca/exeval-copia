@@ -22,3 +22,14 @@ occ_test_data <- function(ids = c(5, 9, 12), n_occ = 3, ss = FALSE) {
   d[order(d$ID, d$OCC), c("ID", "OCC", "CMT", "TIME", "EVID", "AMT", "DV",
                           if (ss) "SS")]
 }
+
+# Run run_MAP_estimations() on the test model with mapbayest mocked out.
+run_map_mocked <- function(...) {
+  testthat::local_mocked_bindings(mapbayest = function(...) "fake_est",
+                                  .package = "mapbayr",
+                                  .env = parent.frame())
+  suppressMessages(run_MAP_estimations(
+    model = occ_model_code(), model_name = "occ_ids",
+    check_compile = FALSE, ...
+  ))
+}
