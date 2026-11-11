@@ -80,3 +80,20 @@ test_that("run_pk_simulations() leaves the global RNG state untouched when seede
                                       seed = 123))
   expect_identical(.Random.seed, before)
 })
+
+test_that("run_pk_simulations() returns an exeval_sims object, not a mapbayr one", {
+  skip_if_not_installed("mrgsolve")
+  skip_if_not_installed("mapbayr")
+  skip_on_cran()
+
+  est <- run_map_mocked(data = occ_test_data(),
+                        evaluation_type = "sequential_updating")
+  res <- suppressMessages(run_pk_simulations(NULL, est, assessment = "a_priori"))
+
+  expect_s3_class(res, "exeval_sims")
+  expect_false(inherits(res, "mapbayr"))
+  # still a plain list for downstream code
+  expect_type(res, "list")
+  expect_true(all(c("simulation_results", "ttoocc", "eval_type",
+                    "events_tto", "assessment") %in% names(res)))
+})
