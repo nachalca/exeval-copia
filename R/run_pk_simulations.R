@@ -32,7 +32,7 @@
 #' @param verbose Logical. If \code{TRUE}, progress messages are printed during
 #' execution. If \code{FALSE}, simulation errors are returned as warnings..
 #'
-#' @return A named list containing:
+#' @return An object of class \code{"exeval_sims"}: a named list containing:
 #' \describe{
 #'   \item{simulation_results}{List of simulated concentration-time profiles
 #'   for each individual and evaluation occasion.}
@@ -219,7 +219,7 @@ run_pk_simulations <- function(individual_model,
     assessment = assessment
   )
 
-  class(out) <- "mapbayr"
+  class(out) <- "exeval_sims"
   return(out)
 
 }

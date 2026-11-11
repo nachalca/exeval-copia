@@ -41,7 +41,7 @@ random number generator state is restored when the function returns. If
 execution. If \code{FALSE}, simulation errors are returned as warnings..}
 }
 \value{
-A named list containing:
+An object of class \code{"exeval_sims"}: a named list containing:
 \describe{
 \item{simulation_results}{List of simulated concentration-time profiles
 for each individual and evaluation occasion.}
