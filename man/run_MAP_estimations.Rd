@@ -111,6 +111,9 @@ strategy.}
 \code{NULL}; needed by \code{\link[=update_map_models]{update_map_models()}} for
 \code{"backward_reference_updating"}.}
 
+\item{occ_apriori}{Occasion used for the a priori predictions:
+\code{occ_ref} if supplied, otherwise 1.}
+
 \item{pop_model}{Compiled population model (\code{mrgmod}) used for
 estimation.}
 }
