@@ -114,6 +114,10 @@
 #'   \item{eval_type}{Character string indicating the selected evaluation
 #'   strategy.}
 #'
+#'   \item{occ_ref}{Reference occasion supplied in \code{occ_ref}, or
+#'   \code{NULL}; needed by [update_map_models()] for
+#'   \code{"backward_reference_updating"}.}
+#'
 #'   \item{pop_model}{Compiled population model (\code{mrgmod}) used for
 #'   estimation.}
 #' }
@@ -412,6 +416,7 @@ function(model, model_name= NULL,
       apriori_treatments = list_apriori,
       map_estimations = list_map,
       eval_type = evaluation_type,
+      occ_ref = occ_ref,
       pop_model = my_model
     ))
   }

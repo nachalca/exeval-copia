@@ -107,6 +107,10 @@ a priori predictive simulations.}
 \item{eval_type}{Character string indicating the selected evaluation
 strategy.}
 
+\item{occ_ref}{Reference occasion supplied in \code{occ_ref}, or
+\code{NULL}; needed by \code{\link[=update_map_models]{update_map_models()}} for
+\code{"backward_reference_updating"}.}
+
 \item{pop_model}{Compiled population model (\code{mrgmod}) used for
 estimation.}
 }
