@@ -36,3 +36,47 @@ test_that("a priori simulations still use OCC 1 without occ_ref", {
   expect_named(res$events_tto, "OCC_1")
   expect_equal(unname(sim_summary(res)), paste(sim_ids, 1, TRUE))
 })
+
+# Captured individual clearance of every simulated subject, in ID order
+sim_cli <- function(res) {
+  vapply(res$simulation_results, function(x) x@data$CLi[1], numeric(1))
+}
+
+stochastic_estimate <- function() {
+  run_map_mocked(data = occ_test_data(), omega = TRUE,
+                 evaluation_type = "sequential_updating")
+}
+
+test_that("seed makes a priori simulations reproducible and varies between subjects", {
+  skip_if_not_installed("mrgsolve")
+  skip_if_not_installed("mapbayr")
+  skip_on_cran()
+
+  est <- stochastic_estimate()
+  run <- function(seed) {
+    suppressMessages(run_pk_simulations(NULL, est, assessment = "a_priori",
+                                        seed = seed))
+  }
+
+  a <- sim_cli(run(123))
+  b <- sim_cli(run(123))
+  c <- sim_cli(run(456))
+
+  expect_equal(a, b)
+  expect_false(isTRUE(all.equal(a, c)))
+  # each subject gets its own random-effect draw
+  expect_equal(length(unique(round(a, 8))), length(a))
+})
+
+test_that("run_pk_simulations() leaves the global RNG state untouched when seeded", {
+  skip_if_not_installed("mrgsolve")
+  skip_if_not_installed("mapbayr")
+  skip_on_cran()
+
+  est <- stochastic_estimate()
+  set.seed(1)
+  before <- .Random.seed
+  suppressMessages(run_pk_simulations(NULL, est, assessment = "a_priori",
+                                      seed = 123))
+  expect_identical(.Random.seed, before)
+})

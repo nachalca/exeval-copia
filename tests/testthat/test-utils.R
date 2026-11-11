@@ -37,3 +37,26 @@ test_that("check_OCC_capture() errors when $CAPTURE is missing", {
 test_that("check_OCC_capture() rejects unsupported input", {
   expect_error(check_OCC_capture(1), "must be either")
 })
+
+test_that("local_seed() seeds reproducibly and restores the previous RNG state", {
+  draw <- function(seed) {
+    local_seed(seed)
+    stats::runif(1)
+  }
+
+  set.seed(10)
+  before <- .Random.seed
+  expect_equal(draw(1), draw(1))
+  expect_identical(.Random.seed, before)
+})
+
+test_that("local_seed() leaves no RNG state behind if there was none", {
+  had_seed <- exists(".Random.seed", envir = globalenv(), inherits = FALSE)
+  saved <- if (had_seed) get(".Random.seed", envir = globalenv())
+  on.exit(if (had_seed) assign(".Random.seed", saved, envir = globalenv()),
+          add = TRUE)
+
+  if (had_seed) rm(".Random.seed", envir = globalenv())
+  (function() local_seed(1))()
+  expect_false(exists(".Random.seed", envir = globalenv(), inherits = FALSE))
+})

@@ -1,10 +1,14 @@
 # Minimal mrgsolve model code that captures OCC, for tests that need a model.
-occ_model_code <- function() {
+# With `omega = TRUE` it adds a random effect on CL that is also captured
+# (as CLi), so stochastic simulations differ between subjects.
+occ_model_code <- function(omega = FALSE) {
   paste(
     "$PARAM CL = 1, V = 10, OCC = 1",
     "$CMT CENT",
+    if (omega) "$OMEGA 0.5",
+    if (omega) "$MAIN double CLi = CL * exp(ETA(1));",
     "$ODE dxdt_CENT = -(CL / V) * CENT;",
-    "$CAPTURE OCC",
+    if (omega) "$CAPTURE OCC CLi" else "$CAPTURE OCC",
     sep = "\n"
   )
 }
@@ -23,12 +27,12 @@ occ_test_data <- function(ids = c(5, 9, 12), n_occ = 3, ss = FALSE) {
 }
 
 # Run run_MAP_estimations() on the test model with mapbayest mocked out.
-run_map_mocked <- function(...) {
+run_map_mocked <- function(..., omega = FALSE) {
   testthat::local_mocked_bindings(mapbayest = function(...) "fake_est",
                                   .package = "mapbayr",
                                   .env = parent.frame())
   suppressMessages(run_MAP_estimations(
-    model = occ_model_code(), model_name = "occ_ids",
+    model = occ_model_code(omega), model_name = "occ_ids",
     check_compile = FALSE, ...
   ))
 }

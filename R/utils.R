@@ -340,3 +340,23 @@ build_id_events <- function(df, occ) {
   names(events) <- paste0("ev.tto.occ", occ, "_ID", ids)
   events
 }
+
+# Set the RNG seed for the calling function and restore the previous RNG state
+# when that function exits, so seeding never leaks into the user's session.
+local_seed <- function(seed, envir = parent.frame()) {
+  has_seed <- exists(".Random.seed", envir = globalenv(), inherits = FALSE)
+  old_seed <- if (has_seed) get(".Random.seed", envir = globalenv()) else NULL
+
+  do.call(on.exit, list(bquote({
+    if (is.null(.(old_seed))) {
+      if (exists(".Random.seed", envir = globalenv(), inherits = FALSE)) {
+        rm(".Random.seed", envir = globalenv())
+      }
+    } else {
+      assign(".Random.seed", .(old_seed), envir = globalenv())
+    }
+  }), add = TRUE), envir = envir)
+
+  set.seed(seed)
+  invisible(NULL)
+}

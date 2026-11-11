@@ -24,8 +24,9 @@
 #'   simulations.
 #' }
 #' @param seed Optional integer used to set the random number generator seed
-#' for reproducible a priori simulations. If \code{NULL} (default), the
-#' current random number generator state is used.
+#' once at the start of the run, for reproducible simulations. The caller's
+#' random number generator state is restored when the function returns. If
+#' \code{NULL} (default), the current random number generator state is used.
 #' 
 #' 
 #' @param verbose Logical. If \code{TRUE}, progress messages are printed during
@@ -104,6 +105,12 @@ run_pk_simulations <- function(individual_model,
 
   assessment <- match.arg(assessment)
   evaluation_type <-map_results$eval_type
+
+  # Seed once for the whole run and leave the caller's RNG state untouched
+  if (!is.null(seed)) {
+    local_seed(seed)
+  }
+
   # Initialize empty lists to store simulation outputs
   simulation_results <- list()
   event.tto <- list()
@@ -137,10 +144,6 @@ run_pk_simulations <- function(individual_model,
       id_number <- sub(".*ID", "", id_name)
 
       tryCatch({
-
-        if (!is.null(seed)) {
-          set.seed(seed)
-        }
 
         treatment <- events_apriori[[id_name]]
         start <- min(treatment$TIME)
