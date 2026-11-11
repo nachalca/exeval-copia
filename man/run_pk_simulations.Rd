@@ -33,8 +33,9 @@ simulations.
 }}
 
 \item{seed}{Optional integer used to set the random number generator seed
-for reproducible a priori simulations. If \code{NULL} (default), the
-current random number generator state is used.}
+once at the start of the run, for reproducible simulations. The caller's
+random number generator state is restored when the function returns. If
+\code{NULL} (default), the current random number generator state is used.}
 
 \item{verbose}{Logical. If \code{TRUE}, progress messages are printed during
 execution. If \code{FALSE}, simulation errors are returned as warnings..}
