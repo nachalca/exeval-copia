@@ -150,6 +150,10 @@ function(model, model_name= NULL,
                                                     "backward_reference_updating"), ## Como se va a hacer la eval externa
                                 method = c("L-BFGS-B", "newuoa")) {
 
+  # resolve multi-choice arguments once, before they are used in conditions
+  evaluation_type <- match.arg(evaluation_type)
+  method <- match.arg(method)
+
   # check data has the required columns
   if (!is.null(occ_ref) && !is.null(num_occ) && occ_ref != num_occ) {
     stop("occ_ref and num_occ must have the same value if both are specified.")

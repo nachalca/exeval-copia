@@ -67,6 +67,7 @@ combine_metric_plot <-function(cmetrics,
                                       'MAIPE_barplot',
                                       'IF20_plot',
                                       'IF30_plot')) {
+    type <- match.arg(type)
     pplot <- NULL
     cmetrics <- cmetrics$cmetrics
     if (type == 'bias_barplot') {
