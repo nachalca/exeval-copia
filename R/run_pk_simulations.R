@@ -121,9 +121,15 @@ run_pk_simulations <- function(individual_model,
 
     tto_apriori <- map_results$apriori_treatments
 
-    treatment_list <- tto_apriori[["tto_1"]]
-    treatment.occ.list[["OCC1"]] <- treatment_list
-    events_apriori <- tto_apriori[["apriori_occ_1"]]
+    # a priori occasion: occ_ref for reference strategies, otherwise OCC 1
+    occ_apriori <- map_results$occ_apriori
+    if (is.null(occ_apriori)) {
+      occ_apriori <- if (is.null(map_results$occ_ref)) 1 else map_results$occ_ref
+    }
+
+    treatment_list <- tto_apriori[[paste0("tto_", occ_apriori)]]
+    treatment.occ.list[[paste0("OCC", occ_apriori)]] <- treatment_list
+    events_apriori <- tto_apriori[[paste0("apriori_occ_", occ_apriori)]]
 
     event.tto.byocc <- list()
 
@@ -131,31 +137,31 @@ run_pk_simulations <- function(individual_model,
       id_number <- sub(".*ID", "", id_name)
 
       tryCatch({
-        
+
         if (!is.null(seed)) {
           set.seed(seed)
         }
-        
-        treatment <- tto_apriori[["apriori_occ_1"]][[paste0("ev.tto.occ1_ID", id_number)]]
+
+        treatment <- events_apriori[[id_name]]
         start <- min(treatment$TIME)
         end <- max(treatment$TIME)
         sim_results <- individual_sim(population_model, treatment, start, end)
-        sim_results@data <- subset(sim_results@data, OCC == 1)
+        sim_results@data <- subset(sim_results@data, OCC == occ_apriori)
 
-        simulation_results[[paste0("OCC_1_ID", id_number)]] <- sim_results
+        simulation_results[[paste0("OCC_", occ_apriori, "_ID", id_number)]] <- sim_results
         event.tto.byocc[[paste0("ID_", id_number)]] <- treatment
 
       }, error = function(e) {
         if (verbose) {
-        message(paste0("Could not simulate ID_", id_number, " in OCC1 (a_priori): ", e$message))
+        message(paste0("Could not simulate ID_", id_number, " in OCC", occ_apriori, " (a_priori): ", e$message))
         } else {
-          warning(paste0("Could not simulate ID_", id_number, " in OCC1 (a_priori): ", e$message),
+          warning(paste0("Could not simulate ID_", id_number, " in OCC", occ_apriori, " (a_priori): ", e$message),
                   call. = FALSE, immediate. = FALSE)
         }
       })
     }
 
-    event.tto[["OCC_1"]] <- event.tto.byocc
+    event.tto[[paste0("OCC_", occ_apriori)]] <- event.tto.byocc
   }
 
   # 2. Bayesian forecasting simulations

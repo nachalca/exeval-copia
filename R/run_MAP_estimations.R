@@ -118,6 +118,9 @@
 #'   \code{NULL}; needed by [update_map_models()] for
 #'   \code{"backward_reference_updating"}.}
 #'
+#'   \item{occ_apriori}{Occasion used for the a priori predictions:
+#'   \code{occ_ref} if supplied, otherwise 1.}
+#'
 #'   \item{pop_model}{Compiled population model (\code{mrgmod}) used for
 #'   estimation.}
 #' }
@@ -399,6 +402,7 @@ function(model, model_name= NULL,
       map_estimations = list_map,
       eval_type = evaluation_type,
       occ_ref = occ_ref,
+      occ_apriori = occ_apriori,
       pop_model = my_model
     ))
   }
