@@ -53,14 +53,7 @@ check_OCC_capture <- function(modelo) {
   }
 
   # Convert model code to a character vector of lines
-  if (length(codigo) == 1) {
-    lineas <- strsplit(codigo, "\n")[[1]]
-  } else {
-    lineas <- codigo
-  }
-
-  # split every line of the model code
-  lineas <- strsplit(modelo, "\n")[[1]]
+  lineas <- unlist(strsplit(codigo, "\n"))
 
   # starts of $CAPTURE
   inicio_capture <- grep("^\\s*\\$CAPTURE\\b", lineas)
