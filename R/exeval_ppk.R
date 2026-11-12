@@ -160,7 +160,10 @@ exeval_ppk <-  function(model,
   t0 <- Sys.time()
   
   
-  if(model %in% exeval_models$Label){
+  # a model label is a single string; mrgmod objects and multi-line code
+  # vectors are passed through unchanged
+  if (is.character(model) && length(model) == 1 &&
+      model %in% exeval_models$Label) {
     model_name <- model
     model      <- exeval_models$Model_code[exeval_models$Label == model]
   }
