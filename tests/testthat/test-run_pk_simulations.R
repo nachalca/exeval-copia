@@ -97,3 +97,42 @@ test_that("run_pk_simulations() returns an exeval_sims object, not a mapbayr one
   expect_true(all(c("simulation_results", "ttoocc", "eval_type",
                     "events_tto", "assessment") %in% names(res)))
 })
+
+test_that("run_pk_simulations() stops clearly when every simulation fails", {
+  skip_if_not_installed("mrgsolve")
+  skip_if_not_installed("mapbayr")
+  skip_on_cran()
+
+  est <- run_map_mocked(data = occ_test_data(),
+                        evaluation_type = "sequential_updating")
+  est$pop_model <- "not a model"  # makes every individual simulation fail
+
+  expect_error(
+    suppressWarnings(run_pk_simulations(NULL, est, assessment = "a_priori")),
+    "No simulations were produced"
+  )
+})
+
+test_that("run_pk_simulations() stops clearly when there is nothing to simulate", {
+  skip_if_not_installed("mrgsolve")
+  skip_if_not_installed("mapbayr")
+  skip_on_cran()
+
+  est <- run_map_mocked(data = occ_test_data(),
+                        evaluation_type = "sequential_updating")
+  est$apriori_treatments[["apriori_occ_1"]] <- list()
+
+  expect_error(
+    run_pk_simulations(NULL, est, assessment = "a_priori"),
+    "No simulations were produced"
+  )
+})
+
+test_that("metrics_occ() stops clearly on empty simulation results", {
+  for (assessment in c("a_priori", "Bayesian_forecasting", "Complete")) {
+    sims <- list(simulation_results = list(), ttoocc = list(),
+                 eval_type = "sequential_updating", assessment = assessment)
+    expect_error(metrics_occ(sims, assessment = assessment),
+                 "No simulations were produced")
+  }
+})

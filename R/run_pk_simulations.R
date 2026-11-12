@@ -210,6 +210,12 @@ run_pk_simulations <- function(individual_model,
   }
 
 
+  if (length(simulation_results) == 0) {
+    stop("No simulations were produced: every individual simulation failed ",
+         "or there was nothing to simulate. Check the warnings above or re-run ",
+         "with verbose = TRUE.", call. = FALSE)
+  }
+
   # Return unified output structure
   out <-list(
     simulation_results = simulation_results,
