@@ -101,6 +101,12 @@ metrics_occ <- function(simulations,
                                       "Complete"),
                        tool = "mapbayr", ...)  {
 
+  if (length(simulations[["simulation_results"]]) == 0) {
+    stop("No simulations were produced: `simulations` has no simulation ",
+         "results. Re-run run_pk_simulations() and check its warnings.",
+         call. = FALSE)
+  }
+
   # Create evaluation type
   evaluation_type <-simulations$eval_type
   # Robust asignment of arguments
