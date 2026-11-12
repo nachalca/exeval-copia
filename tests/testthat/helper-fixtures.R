@@ -36,3 +36,22 @@ run_map_mocked <- function(..., omega = FALSE) {
     check_compile = FALSE, ...
   ))
 }
+
+# Minimal stand-in for an mrgsims object: metrics_occ() only reads its @data.
+methods::setClass("fake_mrgsims", representation(data = "data.frame"))
+
+# Simulation results for one subject and occasion 2, as run_pk_simulations()
+# would return them. `pred` fills the DV (posterior) and CP (a priori) columns.
+fake_sims <- function(pred, obs, assessment = "Bayesian_forecasting") {
+  time <- seq_along(pred)
+  list(
+    simulation_results = list(methods::new("fake_mrgsims", data = data.frame(
+      ID = 1, OCC = 2, TIME = time, DV = pred, CP = pred
+    ))),
+    ttoocc = list(OCC2 = data.frame(
+      ID = 1, OCC = 2, TIME = time, DV = obs, EVID = 0
+    )),
+    eval_type = "sequential_updating",
+    assessment = assessment
+  )
+}
