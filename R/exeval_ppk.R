@@ -648,7 +648,6 @@ summary.EvalPPK <- function(object,
 #' @return A \code{ggplot2} object, except for \code{"IF_plot"}, which
 #' returns a combined plot object generated with \pkg{ggpubr}.
 #'
-#' @import ggplot2 dplyr
 #' @importFrom scales brewer_pal
 #' @rdname exeval_ppk
 #' @export

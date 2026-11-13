@@ -1,6 +1,14 @@
 #' @importFrom methods slot
 #' @importFrom stats qt sd
-#' @importFrom rlang .data
+#' @importFrom rlang .data sym
+#' @importFrom dplyr bind_rows case_when count desc distinct filter first
+#' @importFrom dplyr group_by left_join mutate n rename select summarise ungroup
+#' @importFrom ggplot2 aes element_blank element_rect element_text facet_grid
+#' @importFrom ggplot2 facet_wrap geom_bar geom_boxplot geom_col geom_density
+#' @importFrom ggplot2 geom_errorbar geom_hline geom_jitter geom_point geom_text
+#' @importFrom ggplot2 geom_violin geom_vline ggplot guide_legend guides labeller
+#' @importFrom ggplot2 labs position_fill rel scale_fill_brewer scale_fill_manual
+#' @importFrom ggplot2 scale_y_continuous theme theme_bw theme_minimal unit vars
 NULL
 
 

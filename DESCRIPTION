@@ -34,7 +34,8 @@ Imports:
     scales, 
     stats, 
     methods, 
-    rlang
+    rlang,
+    utils
 Suggests: 
     knitr,
     rmarkdown,
