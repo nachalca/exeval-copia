@@ -89,4 +89,8 @@ print(combined_results)
 }
 \seealso{
 \code{\link[=metrics_occ]{metrics_occ()}}
+
+Other model comparison: 
+\code{\link{combine_metric_plot}()}
 }
+\concept{model comparison}

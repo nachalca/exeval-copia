@@ -164,4 +164,11 @@ fit <- run_MAP_estimations(
 }
 \seealso{
 \code{\link[mapbayr:mapbayest]{mapbayr::mapbayest()}}, \code{\link[mrgsolve:mcode]{mrgsolve::mcode()}}
+
+Other evaluation workflow: 
+\code{\link{exeval_ppk}()},
+\code{\link{metrics_occ}()},
+\code{\link{run_pk_simulations}()},
+\code{\link{update_map_models}()}
 }
+\concept{evaluation workflow}

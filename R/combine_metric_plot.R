@@ -61,6 +61,7 @@
 #' # plot results
 #' combine_metric_plot(combined_results, type = 'bias_barplot')
 #' 
+#' @family model comparison
 #' @export
 combine_metric_plot <-function(cmetrics,
                                type = c('bias_barplot',

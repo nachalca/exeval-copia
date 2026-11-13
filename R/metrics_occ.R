@@ -93,6 +93,7 @@
 #'   assessment = "Complete"
 #' )
 #' }
+#' @family evaluation workflow
 #' @export
 #' 
 metrics_occ <- function(simulations,

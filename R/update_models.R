@@ -72,6 +72,7 @@
 #' }
 #'
 #' @importFrom mapbayr use_posterior
+#' @family evaluation workflow
 #' @export
 
 update_map_models <-
