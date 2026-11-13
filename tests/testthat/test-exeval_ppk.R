@@ -59,3 +59,35 @@ test_that("exeval_ppk() passes verbose on to run_pk_simulations()", {
   expect_equal(run(verbose = TRUE), "verbose=TRUE")
   expect_equal(run(), "verbose=FALSE")
 })
+
+# Minimal EvalPPK object built from fake simulations
+fake_evalppk <- function() {
+  info <- data.frame(
+    argument = c("Num IDs", "Num of Observations Evaluated", "Max Num Occasion",
+                 "Num of Ref Occasion", "Drug Name", "Model Name", "Evaluation",
+                 "Assessment"),
+    value = c("1", "2", "2", "", "", "m", "sequential_updating",
+              "Bayesian_forecasting")
+  )
+  structure(
+    list(metrics = metrics_occ(fake_sims(pred = c(9, 11), obs = c(10, 10)),
+                               assessment = "Bayesian_forecasting"),
+         estimates = NULL, updates = NULL, simulations = NULL),
+    class = "EvalPPK",
+    attributes = info
+  )
+}
+
+test_that("print methods return their argument invisibly", {
+  obj <- fake_evalppk()
+
+  out <- utils::capture.output(vis <- withVisible(print(obj)))
+  expect_false(vis$visible)
+  expect_identical(vis$value, obj)
+  expect_match(paste(out, collapse = "\n"), "Evaluation metrics")
+
+  s <- summary(obj)
+  out <- utils::capture.output(vis <- withVisible(print(s)))
+  expect_false(vis$visible)
+  expect_identical(vis$value, s)
+})

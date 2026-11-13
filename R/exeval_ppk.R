@@ -308,6 +308,8 @@ print.EvalPPK <- function(x, ...) {
   cat("\n")
   print( x$metrics$metrics_means )
   cat(rep("=", nn + 4), "\n", sep = "")
+
+  invisible(x)
 }
 
 
