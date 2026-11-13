@@ -131,8 +131,9 @@ individualized posterior parameter estimates obtained from MAP estimation.
 simulations.
 }}
 
-\item{verbose}{Logical. If \code{TRUE}, progress messages are printed during
-execution.}
+\item{verbose}{Logical. Passed to \code{\link[=run_pk_simulations]{run_pk_simulations()}}: if \code{TRUE},
+subjects whose simulation fails are reported as messages; if \code{FALSE}
+(default) they are reported as warnings.}
 
 \item{progress}{Logical.
 If \code{TRUE}, prints a concise workflow summary and progress

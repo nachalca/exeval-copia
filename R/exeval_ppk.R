@@ -87,8 +87,9 @@
 #'   \item \code{"Complete"}: performs both a priori and Bayesian forecasting
 #'   simulations.
 #' }
-#' @param verbose Logical. If \code{TRUE}, progress messages are printed during
-#' execution.
+#' @param verbose Logical. Passed to [run_pk_simulations()]: if \code{TRUE},
+#' subjects whose simulation fails are reported as messages; if \code{FALSE}
+#' (default) they are reported as warnings.
 #' 
 #' @param progress Logical.
 #' If \code{TRUE}, prints a concise workflow summary and progress
@@ -219,7 +220,7 @@ exeval_ppk <-  function(model,
   if(progress)
     cat("Running PK/PD simulations...\n")
   
-  sims <- run_pk_simulations(updt, est, assessment)
+  sims <- run_pk_simulations(updt, est, assessment, verbose = verbose)
 
   # Compute evaluation metrics
   if(progress)
