@@ -187,7 +187,17 @@ metrics_occ <- function(simulations,
       distinct()
   }
   
-   metrics <- metrics |> 
+  # Relative errors are undefined for observations with DV <= 0 (division by
+  # DV gives Inf/NaN), so exclude them and tell the user
+  non_positive_dv <- metrics$DV <= 0
+  if (any(non_positive_dv, na.rm = TRUE)) {
+    warning(sum(non_positive_dv, na.rm = TRUE),
+            " observation(s) with DV <= 0 were excluded from the metrics ",
+            "(relative errors are undefined).", call. = FALSE)
+    metrics <- metrics[!non_positive_dv %in% TRUE, ]
+  }
+
+   metrics <- metrics |>
     dplyr::mutate(
       Fit_Class = dplyr::case_when(
         abs(IPE) <= 15 ~ "Excellent",
