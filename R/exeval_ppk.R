@@ -129,7 +129,6 @@
 #' @examples
 #' \donttest{
 #' data("tacrolimus_pk1_kidney", package = "exeval")
-#' data("model_tacHAN2011", package = "exeval")
 #'
 #' dd <- tacrolimus_pk1_kidney |> subset(ID < 6)
 #'
