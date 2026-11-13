@@ -68,98 +68,57 @@ combine_metric_plot <-function(cmetrics,
                                       'MAIPE_barplot',
                                       'IF20_plot',
                                       'IF30_plot')) {
-    type <- match.arg(type)
-    pplot <- NULL
-    cmetrics <- cmetrics$cmetrics
-    if (type == 'bias_barplot') {
-      n_occs <- length(unique(cmetrics$OCC))
-      pplot <- cmetrics |>
-        mutate(OCC = factor(OCC) ) |>
-        ggplot(aes(x = Model, y = rBIAS, fill = Model)) +
-      geom_col() +
-        geom_errorbar(aes(ymin = rBIAS_lower, ymax = rBIAS_upper), width = 0.2) +
-        geom_hline(data = data.frame(yy = c(-20, 20)), aes(yintercept = yy), linetype = "dashed", color = 'firebrick') +
-        scale_fill_brewer(palette = "Dark2") +
-        theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 13)) +
-        theme(axis.text.y = element_text(size = 13)) +
-        guides(fill = guide_legend(title.position = "top", nrow = 8, ncol = 3)) +
-        labs(y = "rBIAS(%)") +
-        theme(legend.key.size = unit(0.25, "cm"), 
-              legend.key.width = unit(0.4, "cm"), 
-              legend.position = "right", 
-              legend.direction = "horizontal", 
-              legend.title = element_text(size = 13, face = "bold"), 
-              legend.text = element_text(size = 12), 
-              axis.title.y = element_text(size = 13),
-              strip.text = element_text(size = 13, face = "bold")) + 
-        facet_wrap(~OCC, ncol = n_occs, labeller = labeller(OCC = function(x) paste0("OCC ", x)))
-    } else if (type == 'MAIPE_barplot') {
-      n_occs <- length(unique(cmetrics$OCC))
-      pplot <-   cmetrics |> # rBIAS_boxplot
-        mutate(OCC = factor(OCC) ) |>
-        ggplot (aes(x=Model, y=MAIPE, fill=Model)) +
-        geom_col() +
-        geom_hline(data = data.frame(yy = c(30)), aes(yintercept = yy), linetype = "dashed", color = 'firebrick') +
-        scale_fill_brewer(palette = "Dark2") +
-        theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 13)) +
-        theme(axis.text.y = element_text(size = 13)) +
-        guides(fill = guide_legend(title.position = "top", nrow = 8, ncol = 3)) +
-        labs(y = "MAIPE(%)") +
-        theme(legend.key.size = unit(0.25, "cm"), 
-              legend.key.width = unit(0.4, "cm"), 
-              legend.position = "right", 
-              legend.direction = "horizontal", 
-              legend.title = element_text(size = 13, face = "bold"), 
-              legend.text = element_text(size = 12), 
-              axis.title.y = element_text(size = 13),
-              strip.text = element_text(size = 13, face = "bold")) + 
-        facet_wrap(~OCC, ncol = n_occs, labeller = labeller(OCC = function(x) paste0("OCC ", x)))
-    }
-    else if (type ==  'IF30_plot') {
-      n_occs <- length(unique(cmetrics$OCC))
-      pplot <- cmetrics |>  #  IF20_plot
-        mutate(OCC = factor(OCC) ) |>
-        ggplot(aes(x=Model, y=IF30)) +
-        geom_col(aes(fill=Model) ) +
-        geom_hline( aes(yintercept= 50), linetype = "dashed", colour= 'firebrick') +
-        scale_fill_brewer(palette = "Dark2")+
-        theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 13)) +
-        theme(axis.text.y = element_text(size = 13)) +
-        guides(fill = guide_legend(title.position = "top", nrow = 8, ncol = 3)) +
-        labs(title="IF30- Bayesian Forecasting", y="IF30(%)")+
-        theme(legend.key.size = unit(0.25, "cm"), 
-              legend.key.width = unit(0.4, "cm"), 
-              legend.position = "right", 
-              legend.direction = "horizontal", 
-              legend.title = element_text(size = 13, face = "bold"), 
-              legend.text = element_text(size = 12), 
-              axis.title.y = element_text(size = 13),
-              strip.text = element_text(size = 13, face = "bold")) + 
-        facet_wrap(~OCC, ncol=n_occs, labeller = labeller(OCC = function(x) paste0("OCC ", x)))
-    }
+  type <- match.arg(type)
+  spec <- metric_plot_specs[[type]]
+  cmetrics <- cmetrics$cmetrics
+  n_occs <- length(unique(cmetrics$OCC))
 
-    else if (type ==  'IF20_plot') {
-      n_occs <- length(unique(cmetrics$OCC))
-      pplot <- cmetrics |>  #  IF20_plot
-        mutate(OCC = factor(OCC) ) |>
-        ggplot(aes(x=Model, y=IF20))+
-        geom_col( aes(fill=Model) )+
-        geom_hline( aes(yintercept= 35), linetype = "dashed", colour= 'firebrick') +
-        scale_fill_brewer(palette = "Dark2")+
-        theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 13)) +
-        theme(axis.text.y = element_text(size = 13)) +
-        guides(fill = guide_legend(title.position = "top", nrow = 8, ncol = 3)) +
-        labs(title="IF20- Bayesian Forecasting",y="IF20(%)")+
-        theme(legend.key.size = unit(0.25, "cm"), 
-              legend.key.width = unit(0.4, "cm"), 
-              legend.position = "right", 
-              legend.direction = "horizontal", 
-              legend.title = element_text(size = 13, face = "bold"), 
-              legend.text = element_text(size = 12), 
-              axis.title.y = element_text(size = 13),
-              strip.text = element_text(size = 13, face = "bold")) + 
-        facet_wrap(~OCC, ncol = n_occs, labeller = labeller(OCC = function(x) paste0("OCC ", x)))
-    }
+  pplot <- cmetrics |>
+    mutate(OCC = factor(OCC)) |>
+    ggplot(aes(x = Model, y = !!sym(spec$y), fill = Model)) +
+    geom_col()
 
-    return(pplot)
+  if (isTRUE(spec$errorbar)) {
+    pplot <- pplot +
+      geom_errorbar(aes(ymin = rBIAS_lower, ymax = rBIAS_upper), width = 0.2)
   }
+
+  pplot +
+    geom_hline(data = data.frame(yy = spec$hline), aes(yintercept = yy),
+               linetype = "dashed", color = "firebrick") +
+    scale_fill_brewer(palette = "Dark2") +
+    guides(fill = guide_legend(title.position = "top", nrow = 8, ncol = 3)) +
+    labs(title = spec$title, y = spec$label) +
+    metric_plot_theme() +
+    facet_wrap(~OCC, ncol = n_occs,
+               labeller = labeller(OCC = function(x) paste0("OCC ", x)))
+}
+
+# What differs between the plot types: the plotted metric, its axis label and
+# title, the dashed reference line(s), and whether error bars are drawn.
+metric_plot_specs <- list(
+  bias_barplot  = list(y = "rBIAS", label = "rBIAS(%)", title = NULL,
+                       hline = c(-20, 20), errorbar = TRUE),
+  MAIPE_barplot = list(y = "MAIPE", label = "MAIPE(%)", title = NULL,
+                       hline = 30, errorbar = FALSE),
+  IF20_plot     = list(y = "IF20", label = "IF20(%)",
+                       title = "IF20- Bayesian Forecasting",
+                       hline = 35, errorbar = FALSE),
+  IF30_plot     = list(y = "IF30", label = "IF30(%)",
+                       title = "IF30- Bayesian Forecasting",
+                       hline = 50, errorbar = FALSE)
+)
+
+# Theme shared by all combine_metric_plot() types
+metric_plot_theme <- function() {
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 13),
+        axis.text.y = element_text(size = 13),
+        axis.title.y = element_text(size = 13),
+        legend.key.size = unit(0.25, "cm"),
+        legend.key.width = unit(0.4, "cm"),
+        legend.position = "right",
+        legend.direction = "horizontal",
+        legend.title = element_text(size = 13, face = "bold"),
+        legend.text = element_text(size = 12),
+        strip.text = element_text(size = 13, face = "bold"))
+}
