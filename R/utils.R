@@ -8,7 +8,7 @@ utils::globalVariables(c(
   "APE", "CP", "Cc", "DV", "EVID", "ID", "IF20", "IF30",
   "IPE", "Ind_Prediction", "MAIPE", "Model", "OCC", "RMSE",
   "TIME", "dummy1", "dummy2", "id", "occ_ref",
-  "original_id_output", "posterior_model", "prop",
+  "original_id_output", "prop",
   "rBIAS", "rBIAS_lower", "rBIAS_upper",
   "time", "tramo", "yy" , "Prediction", "Prediction_Type",
   "Plot_Time", "Abs_IPE", "Fit_Class", "Parameter", "Value", "n_poor",
@@ -73,26 +73,6 @@ check_OCC_capture <- function(modelo) {
     stop("Error: 'OCC' is not present in the $CAPTURE section.")
   }
 }
-
-pop_sim <-
-  function(population_model,
-           treatment,
-           start,
-           end,
-           ss_fixed = FALSE,
-           ss_n = NULL,
-           tad = FALSE) {
-
-    population_model <- population_model |>
-      mrgsolve::data_set(treatment) |>
-      mrgsolve::update(start = start, end = end)
-
-    sim_result <- mrgsolve::mrgsim(posterior_model)
-    return(sim_result)
-  }
-
-
-
 
 #### Generate fake metrics for examples#####
 generate_fake_metrics <- function(n_occasions = 3) {
@@ -161,46 +141,6 @@ extract_predictions <- function(simulations) {
   return(df_final)
 }
 
-
-get_model_path <-
-  function(name, ext = c("cpp", "R")) {
-    ext <- match.arg(ext)
-
-    path <- system.file(
-      "model_examples",
-      paste0(name, ".", ext),
-      package = "exeval"
-    )
-
-    if (path == "") {
-      stop("Model not found: ", name)
-    }
-
-    path
-  }
-
-
-get_model_code <- function(name) {
-
-  path <- system.file(
-    "model_examples",
-    paste0(name, ".R"),
-    package = "exeval"
-  )
-
-  if (path == "") {
-    stop("Model not found: ", name, call. = FALSE)
-  }
-
-  env <- new.env()
-  source(path, local = env)
-
-  if (!exists("model", env)) {
-    stop("Model file must create an object called `model`", call. = FALSE)
-  }
-
-  env$model
-}
 
 select_best_models <-
   function(data, metric, top_n = 3, occ_eval=NULL , rank_criteria = 'min') {
