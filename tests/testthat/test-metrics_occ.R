@@ -24,3 +24,24 @@ test_that("an error is raised when every observation has DV <= 0", {
     "metrics. object could not be generated"
   )
 })
+
+test_that("a single observation gives NA confidence limits without warnings", {
+  sims <- fake_sims(pred = 9, obs = 10)
+
+  expect_no_warning(res <- metrics_occ(sims, assessment = "Bayesian_forecasting"))
+
+  expect_equal(res$metrics_means$rBIAS, -10)
+  expect_identical(res$metrics_means$rBIAS_lower, NA_real_)
+  expect_identical(res$metrics_means$rBIAS_upper, NA_real_)
+})
+
+test_that("confidence limits use the t distribution for two or more observations", {
+  sims <- fake_sims(pred = c(9, 12), obs = c(10, 10))  # IPE = -10, 20
+
+  res <- metrics_occ(sims, assessment = "Bayesian_forecasting")
+
+  half <- stats::qt(0.975, df = 1) * stats::sd(c(-10, 20)) / sqrt(2)
+  expect_equal(res$metrics_means$rBIAS, 5)
+  expect_equal(res$metrics_means$rBIAS_lower, 5 - half)
+  expect_equal(res$metrics_means$rBIAS_upper, 5 + half)
+})

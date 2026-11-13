@@ -60,3 +60,13 @@ test_that("local_seed() leaves no RNG state behind if there was none", {
   (function() local_seed(1))()
   expect_false(exists(".Random.seed", envir = globalenv(), inherits = FALSE))
 })
+
+test_that("ci_half_width() returns NA for fewer than two values", {
+  expect_identical(ci_half_width(1), NA_real_)
+  expect_identical(ci_half_width(numeric(0)), NA_real_)
+})
+
+test_that("ci_half_width() matches the t-based half width", {
+  x <- c(2, 4, 9)
+  expect_equal(ci_half_width(x), stats::qt(0.975, 2) * stats::sd(x) / sqrt(3))
+})
