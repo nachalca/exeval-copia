@@ -76,6 +76,7 @@
 #'combined_results <- combine_metrics(models_list)
 #'print(combined_results)
 #'
+#' @family model comparison
 #' @export
 
 combine_metrics <-function(models,

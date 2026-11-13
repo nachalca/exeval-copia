@@ -126,6 +126,7 @@
 #' }
 #' @seealso [mapbayr::mapbayest()], [mrgsolve::mcode()]
 #' 
+#' @family evaluation workflow
 #' @export
 #'
 #' @examples

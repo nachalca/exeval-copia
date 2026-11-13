@@ -84,3 +84,11 @@ post <- update_map_models(
 }
 
 }
+\seealso{
+Other evaluation workflow: 
+\code{\link{exeval_ppk}()},
+\code{\link{metrics_occ}()},
+\code{\link{run_MAP_estimations}()},
+\code{\link{run_pk_simulations}()}
+}
+\concept{evaluation workflow}

@@ -2,10 +2,6 @@
 % Please edit documentation in R/exeval_ppk.R
 \name{exeval_ppk}
 \alias{exeval_ppk}
-\alias{print.EvalPPK}
-\alias{print.summary.EvalPPK}
-\alias{summary.EvalPPK}
-\alias{plot.EvalPPK}
 \title{External evaluation workflow for population PK, PKPD models}
 \usage{
 exeval_ppk(
@@ -26,30 +22,6 @@ exeval_ppk(
   assessment = c("a_priori", "Bayesian_forecasting", "Complete"),
   verbose = FALSE,
   progress = TRUE
-)
-
-\method{print}{EvalPPK}(x, ...)
-
-\method{print}{summary.EvalPPK}(x, ...)
-
-\method{summary}{EvalPPK}(
-  object,
-  occ = NULL,
-  by_occ = TRUE,
-  poor_threshold = 50,
-  top_n = 10,
-  ...
-)
-
-\method{plot}{EvalPPK}(
-  x,
-  type = c("bias_barplot", "bias_pointrange", "MAIPE_barplot", "bias_boxplot",
-    "bias_violin", "bias_dotplot", "bias_density", "IF20_plot", "IF30_plot", "IF_plot",
-    "error_plot", "fit_class", "fit_histogram"),
-  occ = NULL,
-  signed = FALSE,
-  colors = NULL,
-  ...
 )
 }
 \arguments{
@@ -138,76 +110,6 @@ subjects whose simulation fails are reported as messages; if \code{FALSE}
 \item{progress}{Logical.
 If \code{TRUE}, prints a concise workflow summary and progress
 messages during the external evaluation.}
-
-\item{x}{An object of class \code{EvalPPK}.}
-
-\item{...}{Additional arguments passed to or from other methods.}
-
-\item{object}{An object of class \code{EvalPPK}.}
-
-\item{occ}{Optional numeric occasion (\code{OCC}) to filter the plot.
-If \code{NULL} (default), all available occasions are included.}
-
-\item{by_occ}{Logical. If \code{TRUE}, summaries are stratified by
-occasion (\code{OCC}). Cannot be used together with \code{occ}.}
-
-\item{poor_threshold}{Numeric threshold defining poor fit based on
-absolute individual prediction error (\code{|IPE|}). Default is \code{50}.}
-
-\item{top_n}{Integer. Number of poorly fitted individuals to report.
-Default is \code{10}.}
-
-\item{type}{Character string specifying the type of plot to generate.
-Available options are:
-\itemize{
-\item \code{"bias_barplot"}: bar plot of relative bias
-(\code{rBIAS}) with confidence intervals.
-
-\item \code{"bias_pointrange"}: point-range plot of
-relative bias (\code{rBIAS}) with confidence intervals.
-
-\item \code{"MAIPE_barplot"}: bar plot of mean absolute individual
-prediction error (\code{MAIPE}) by occasion.
-
-\item \code{"bias_boxplot"}: boxplot of individual prediction errors
-(\code{IPE}) by occasion.
-
-\item \code{"bias_violin"}: violin plot of individual prediction
-errors (\code{IPE}) by occasion.
-
-\item \code{"bias_dotplot"}: jittered dot plot of individual prediction
-errors (\code{IPE}) by occasion.
-
-\item \code{"bias_density"}: density plot of individual prediction
-errors across occasions.
-
-\item \code{"IF20_plot"}: bar plot of \code{IF20} values with
-reference threshold.
-
-\item \code{"IF30_plot"}: bar plot of \code{IF30} values with
-reference threshold.
-
-\item \code{"IF_plot"}: combined visualization of both
-\code{IF20} and \code{IF30}.
-
-\item \code{"error_plot"}: stacked bar plot showing the proportion
-of observations within predefined prediction error categories.
-
-\item \code{"fit_class"}: bar plot showing the distribution of fit
-quality categories.
-
-\item \code{"fit_histogram"}: histogram of individual prediction
-error values.
-}}
-
-\item{signed}{Logical. Only used when
-\code{type = "fit_histogram"}.
-If \code{TRUE}, signed individual prediction errors are plotted.
-If \code{FALSE} (default), absolute individual prediction errors are used.}
-
-\item{colors}{Optional named character vector of colors for OCC categories.
-The names should correspond to the OCC values. If \code{NULL} (default),
-the \code{Dark2} palette is used.}
 }
 \value{
 An object of class \code{EvalPPK} containing:
@@ -225,46 +127,12 @@ An object of class \code{EvalPPK} containing:
 }
 
 Additional workflow metadata are stored as object attributes.
-
-An object of class \code{summary.EvalPPK} containing:
-\describe{
-\item{metadata}{Evaluation metadata inherited from the original
-\code{EvalPPK} object.}
-
-\item{global_metrics}{Summary performance metrics across all observations
-or stratified by occasion.}
-
-\item{fit_distribution}{Distribution of fit quality categories based on
-absolute prediction error.}
-
-\item{poor_fit_ids}{Table of individuals exceeding the selected poor-fit
-threshold.}
-}
-
-A \code{ggplot2} object, except for \code{"IF_plot"}, which
-returns a combined plot object generated with \pkg{ggpubr}.
 }
 \description{
 Runs the complete external evaluation workflow for population
 pharmacokinetic (popPK) or pharmacokinetic-pharmacodynamic (PKPD) models,
 including MAP estimation, posterior model updating, simulation, and
 prediction error metric calculation.
-
-Prints a formatted representation of an \code{EvalPPK} object, including
-dataset characteristics, evaluation settings, and performance metrics.
-
-Prints a formatted representation of a summary generated from an
-\code{EvalPPK} object, including metadata, applied summary settings,
-global performance metrics, fit distribution, and poorly fitted
-individuals.
-
-Generates a structured summary of an \code{EvalPPK} object, including
-global performance metrics, fit quality classification, and identification
-of poorly fitted individuals.
-
-Generates visualization plots for external evaluation results stored in an
-\code{EvalPPK} object, including prediction error metrics, fit quality
-distributions, and forecasting performance summaries.
 }
 \details{
 This function serves as the main high-level interface for the
@@ -280,13 +148,6 @@ This function executes the complete external evaluation workflow:
 
 The returned object is an \code{EvalPPK} object containing all intermediate
 results and summary metadata.
-
-Summary outputs can be generated across all occasions, for a specific
-occasion, or stratified by occasion.
-
-This method provides visualization tools for assessing predictive
-performance of external model evaluations, including bias, precision,
-forecasting success, and fit quality classification.
 }
 \examples{
 \donttest{
@@ -305,4 +166,15 @@ print(res) # Print the results
 \seealso{
 \code{\link[=run_MAP_estimations]{run_MAP_estimations()}}, \code{\link[=update_map_models]{update_map_models()}},
 \code{\link[=run_pk_simulations]{run_pk_simulations()}}, \code{\link[=metrics_occ]{metrics_occ()}}
+
+\code{\link[=print.EvalPPK]{print.EvalPPK()}}, \code{\link[=summary.EvalPPK]{summary.EvalPPK()}}, \code{\link[=plot.EvalPPK]{plot.EvalPPK()}},
+\code{\link[=run_MAP_estimations]{run_MAP_estimations()}}, \code{\link[=update_map_models]{update_map_models()}}, \code{\link[=run_pk_simulations]{run_pk_simulations()}},
+\code{\link[=metrics_occ]{metrics_occ()}}
+
+Other evaluation workflow: 
+\code{\link{metrics_occ}()},
+\code{\link{run_MAP_estimations}()},
+\code{\link{run_pk_simulations}()},
+\code{\link{update_map_models}()}
 }
+\concept{evaluation workflow}

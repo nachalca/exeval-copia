@@ -112,4 +112,11 @@ sim <- run_pk_simulations(
 }
 \seealso{
 \code{\link[=run_MAP_estimations]{run_MAP_estimations()}}, \code{\link[=update_map_models]{update_map_models()}}
+
+Other evaluation workflow: 
+\code{\link{exeval_ppk}()},
+\code{\link{metrics_occ}()},
+\code{\link{run_MAP_estimations}()},
+\code{\link{update_map_models}()}
 }
+\concept{evaluation workflow}

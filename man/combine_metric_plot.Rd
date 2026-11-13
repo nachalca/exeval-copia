@@ -74,4 +74,8 @@ combine_metric_plot(combined_results, type = 'bias_barplot')
 }
 \seealso{
 \code{\link[=combine_metrics]{combine_metrics()}}, \code{\link[=plot.EvalPPK]{plot.EvalPPK()}}
+
+Other model comparison: 
+\code{\link{combine_metrics}()}
 }
+\concept{model comparison}

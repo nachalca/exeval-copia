@@ -108,4 +108,11 @@ mm <- metrics_occ(
 }
 \seealso{
 \code{\link[=run_pk_simulations]{run_pk_simulations()}}, \code{\link[=plot.EvalPPK]{plot.EvalPPK()}}, \code{\link[=summary.EvalPPK]{summary.EvalPPK()}}
+
+Other evaluation workflow: 
+\code{\link{exeval_ppk}()},
+\code{\link{run_MAP_estimations}()},
+\code{\link{run_pk_simulations}()},
+\code{\link{update_map_models}()}
 }
+\concept{evaluation workflow}

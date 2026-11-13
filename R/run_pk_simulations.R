@@ -95,6 +95,7 @@
 #' }
 #'
 #' @seealso [run_MAP_estimations()], [update_map_models()]
+#' @family evaluation workflow
 #' @export
 #'
 run_pk_simulations <- function(individual_model,
