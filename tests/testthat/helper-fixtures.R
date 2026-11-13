@@ -55,3 +55,23 @@ fake_sims <- function(pred, obs, assessment = "Bayesian_forecasting") {
     assessment = assessment
   )
 }
+
+# EvalPPK object with two occasions, three subjects and every error band, for
+# testing plot.EvalPPK() without running the whole workflow.
+fake_evalppk_plots <- function(assessment = "Bayesian_forecasting") {
+  m <- data.frame(
+    ID = rep(1:3, times = 2), OCC = rep(2:3, each = 3), TIME = 1,
+    DV = 10, Ind_Prediction = 10, IPE = c(5, -20, 40, 60, -10, 25)
+  )
+  m$APE <- abs(m$IPE)
+  m$RMSE <- (m$IPE / 100)^2
+  m$Fit_Class <- dplyr::case_when(abs(m$IPE) <= 15 ~ "Excellent", abs(m$IPE) <= 30 ~ "Acceptable",
+                                  abs(m$IPE) <= 50 ~ "Poor", TRUE ~ "Very Poor")
+  means <- do.call(rbind, lapply(split(m, m$OCC), function(d) data.frame(
+    rBIAS = mean(d$IPE), rBIAS_lower = mean(d$IPE) - 10, rBIAS_upper = mean(d$IPE) + 10,
+    MAIPE = mean(d$APE), rRMSE = 10, IF20 = 100 * mean(abs(d$IPE) <= 20),
+    IF30 = 100 * mean(abs(d$IPE) <= 30), OCC = d$OCC[1])))
+  structure(list(metrics = list(metrics = m, metrics_means = means),
+                 estimates = NULL, updates = NULL, simulations = list(assessment = assessment)),
+            class = "EvalPPK")
+}

@@ -685,10 +685,6 @@ plot.EvalPPK <- function(x,
 
 
   if (type == 'fit_class') {
-    # plot_fit_distribution(x = x,
-    #                       occ = occ,
-    #                       type = "fit_class",
-    #                       signed = signed)
     fit_colors <- c(
       "Excellent" = "paleturquoise",
       "Acceptable" = "darkseagreen",
@@ -808,95 +804,25 @@ plot.EvalPPK <- function(x,
       mutate(OCC = factor(OCC) ) |>
       ggplot( aes(x=OCC, y=IPE, fill=OCC)) + geom_violin() +
       occ_fill_scale
-  } else if (type ==  'IF20_plot') {
-    pp <- mm[[2]] |> #  IF20_plot
+  } else if (type %in% c('IF20_plot', 'IF30_plot')) {
+    spec <- metric_plot_specs[[type]]
+    pp <- mm[[2]] |>
       mutate(OCC = factor(OCC) ) |>
-      ggplot(aes(x=OCC, y=IF20))+
-      geom_col( aes(fill=OCC) )+
-      geom_hline( aes(yintercept= 35), linetype = "dashed", colour= 'firebrick') +
-      occ_fill_scale + 
-      labs(title="IF20- Bayesian Forecasting",y="IF20(%)")+
-      theme(plot.title = element_text(size = rel(1), colour = "black")) +
-      theme(plot.title = element_text(size = 10, face = "bold"))
-  }
-  else if (type ==  'IF30_plot') {
-    pp <- mm[[2]] |> #  IF20_plot
-      mutate(OCC = factor(OCC) ) |>
-      ggplot(aes(x=OCC, y=IF30))+
-      geom_col( aes(fill=OCC) )+
-      geom_hline( aes(yintercept= 50), linetype = "dashed", colour= 'firebrick') +
-      occ_fill_scale + 
-      labs(title="IF30- Bayesian Forecasting",y="IF30(%)")+
-      theme(plot.title = element_text(size = rel(1), colour = "black")) +
-      theme(plot.title = element_text(size = 10, face = "bold"))
+      ggplot(aes(x = OCC, y = !!sym(spec$y))) +
+      geom_col(aes(fill = OCC)) +
+      geom_hline(yintercept = spec$hline, linetype = "dashed", colour = 'firebrick') +
+      occ_fill_scale +
+      labs(title = paste0(spec$y, "- ", assessment_label(x)), y = spec$label) +
+      theme(plot.title = element_text(size = 10, face = "bold", colour = "black"))
   }
   else if(type== "IF_plot") {
-    mm[[2]]$dummy1 <- "IF20(%)"
-    mm[[2]]$dummy2 <- "IF30(%)"
-
-    plot_resumen_bayes_IF20 <- mm[[2]] |>
-      mutate(OCC = factor(OCC) ) |>
-      ggplot(aes(x=OCC, y=IF20))+
-      geom_col( aes(fill=OCC) )+
-      geom_hline(data = data.frame(yy = c(35)), aes(yintercept = yy), linetype = "dashed", color = 'blue')+
-      theme(
-        axis.title.x = element_blank(),
-        axis.title.y = element_blank(),
-        axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.key.size = unit(0.25, "cm"),
-        legend.key.width = unit(0.4, "cm"),
-        legend.position = "bottom",
-        legend.direction = "horizontal",
-        legend.title = element_text(size = 11, face = "bold"),
-        legend.text = element_text(size = 10),
-        strip.text = element_text(size=12, face="bold"),
-        panel.grid = element_blank(),
-        panel.border = element_rect(color = "black", fill = NA),
-        strip.background = element_rect(color = "black", fill = "white"),
-        panel.background = element_rect(fill = "white")
-      ) + guides(fill = guide_legend(title.position = "top", nrow = 2, ncol = 3)) +
-      facet_grid(rows = vars(dummy1)) +
-      occ_fill_scale +
-      theme(
-        panel.border = element_rect(color = "black", fill = NA, linewidth = 0.5),
-        strip.background = element_rect(fill = "gray80", color = "black"),
-        strip.text = element_text(face = "bold", size = 10)
-      )
-
-    plot_resumen_bayes_IF30 <- mm[[2]] |>
-      mutate(OCC = factor(OCC) ) |>
-      ggplot(aes(x=OCC, y=IF30))+
-      geom_col( aes(fill=OCC) )+
-      geom_hline(data = data.frame(yy = c(50)), aes(yintercept = yy), linetype = "dashed", color = 'blue')+
-      theme(
-        axis.title.y = element_blank(),
-        axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.key.size = unit(0.25, "cm"),
-        legend.key.width = unit(0.4, "cm"),
-        legend.position = "bottom",
-        legend.direction = "horizontal",
-        legend.title = element_text(size = 11, face = "bold"),
-        legend.text = element_text(size = 10),
-        strip.text = element_text(size=12, face="bold"),
-        panel.grid = element_blank(),
-        panel.border = element_rect(color = "black", fill = NA),
-        strip.background = element_rect(color = "black", fill = "white"),
-        panel.background = element_rect(fill = "white")
-      ) + guides(fill = guide_legend(title.position = "top", nrow = 2, ncol = 3)) +
-      facet_grid(rows = vars(dummy2)) +
-      occ_fill_scale +
-      theme(
-        panel.border = element_rect(color = "black", fill = NA, linewidth = 0.5),
-        strip.background = element_rect(fill = "gray80", color = "black"),
-        strip.text = element_text(face = "bold", size = 10)
-      )
-
-    pp= ggpubr::ggarrange(plot_resumen_bayes_IF20,
-                          plot_resumen_bayes_IF30,
-                          common.legend = TRUE,
-                          legend = "right",
-                          nrow = 2, ncol = 1,
-                          align = "v")
+    pp <- ggpubr::ggarrange(if_summary_panel(mm[[2]], "IF20", occ_fill_scale,
+                                             x_title = FALSE),
+                            if_summary_panel(mm[[2]], "IF30", occ_fill_scale),
+                            common.legend = TRUE,
+                            legend = "right",
+                            nrow = 2, ncol = 1,
+                            align = "v")
   }
 
   else if(type== "error_plot") {
@@ -905,8 +831,7 @@ plot.EvalPPK <- function(x,
         abs(IPE) > 50 ~ "50+",
         abs(IPE) > 30 & abs(IPE) <= 50 ~ "30+",
         abs(IPE) > 15 & abs(IPE) <= 30 ~ "15+",
-        abs(IPE) <= 15 ~ "<15",
-        TRUE ~ "cucu"
+        abs(IPE) <= 15 ~ "<15"
       )) |>
       mutate(tramo = factor(tramo, levels = c("50+", "30+", "15+", "<15"))) |>
       count(OCC, tramo) |>
@@ -953,9 +878,51 @@ plot.EvalPPK <- function(x,
 }
 
 
+# Human-readable name of the assessment that was evaluated, for plot titles
+assessment_label <- function(x) {
+  assessment <- x$simulations$assessment
+  if (is.null(assessment)) {
+    assessment <- "Bayesian_forecasting"
+  }
+  switch(assessment,
+         Bayesian_forecasting = "Bayesian Forecasting",
+         a_priori = "A priori",
+         Complete = "Complete",
+         assessment)
+}
 
+# One panel of the combined IF20/IF30 plot: bars per occasion, a facet strip
+# carrying the metric label, and the dashed threshold line
+if_summary_panel <- function(df, metric, fill_scale, x_title = TRUE) {
+  spec <- metric_plot_specs[[paste0(metric, "_plot")]]
 
+  panel <- df |>
+    mutate(OCC = factor(OCC), strip = spec$label) |>
+    ggplot(aes(x = OCC, y = !!sym(metric))) +
+    geom_col(aes(fill = OCC)) +
+    geom_hline(data = data.frame(yy = spec$hline), aes(yintercept = yy),
+               linetype = "dashed", color = "blue") +
+    theme(
+      axis.title.y = element_blank(),
+      axis.text.x = element_text(angle = 45, hjust = 1),
+      legend.key.size = unit(0.25, "cm"),
+      legend.key.width = unit(0.4, "cm"),
+      legend.position = "bottom",
+      legend.direction = "horizontal",
+      legend.title = element_text(size = 11, face = "bold"),
+      legend.text = element_text(size = 10),
+      panel.grid = element_blank(),
+      panel.background = element_rect(fill = "white"),
+      panel.border = element_rect(color = "black", fill = NA, linewidth = 0.5),
+      strip.background = element_rect(fill = "gray80", color = "black"),
+      strip.text = element_text(face = "bold", size = 10)
+    ) +
+    guides(fill = guide_legend(title.position = "top", nrow = 2, ncol = 3)) +
+    facet_grid(rows = vars(.data$strip)) +
+    fill_scale
 
-
-
-
+  if (!x_title) {
+    panel <- panel + theme(axis.title.x = element_blank())
+  }
+  panel
+}
