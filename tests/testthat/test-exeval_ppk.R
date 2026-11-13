@@ -38,3 +38,24 @@ test_that("exeval_ppk() accepts a compiled mrgmod object", {
   msg <- inspect_model_input(mod)
   expect_match(msg, "class=mrgmod", fixed = TRUE)
 })
+
+test_that("exeval_ppk() passes verbose on to run_pk_simulations()", {
+  # Mock the pipeline up to the simulations, which report the verbose they got
+  testthat::local_mocked_bindings(
+    run_MAP_estimations = function(...) list(),
+    update_map_models = function(...) list(),
+    run_pk_simulations = function(individual_model, map_results, assessment,
+                                  seed = NULL, verbose = FALSE) {
+      stop("verbose=", verbose, call. = FALSE)
+    }
+  )
+  run <- function(...) {
+    tryCatch(
+      exeval_ppk(model = "TAC_Han2011", data = data.frame(), progress = FALSE, ...),
+      error = function(e) conditionMessage(e)
+    )
+  }
+
+  expect_equal(run(verbose = TRUE), "verbose=TRUE")
+  expect_equal(run(), "verbose=FALSE")
+})
