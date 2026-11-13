@@ -15,7 +15,7 @@ NULL
 utils::globalVariables(c(
   "APE", "CP", "Cc", "DV", "EVID", "ID", "IF20", "IF30",
   "IPE", "Ind_Prediction", "MAIPE", "Model", "OCC", "RMSE",
-  "TIME", "dummy1", "dummy2", "id", "occ_ref",
+  "TIME", "id", "occ_ref",
   "original_id_output", "prop",
   "rBIAS", "rBIAS_lower", "rBIAS_upper",
   "time", "tramo", "yy" , "Prediction", "Prediction_Type",
