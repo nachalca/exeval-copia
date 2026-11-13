@@ -360,3 +360,13 @@ local_seed <- function(seed, envir = parent.frame()) {
   set.seed(seed)
   invisible(NULL)
 }
+
+# Half width of the 95% t-based confidence interval of the mean of `x`.
+# Undefined (NA, without warnings) when there are fewer than two values.
+ci_half_width <- function(x) {
+  n <- length(x)
+  if (n < 2) {
+    return(NA_real_)
+  }
+  stats::qt(0.975, df = n - 1) * stats::sd(x) / sqrt(n)
+}

@@ -214,8 +214,8 @@ metrics_occ <- function(simulations,
     group_by(OCC) |>
     summarise(
       rBIAS= mean(IPE),
-      rBIAS_lower = mean(IPE)-( qt(0.975, df = length(IPE) - 1) *(sd(IPE) / sqrt(length(IPE)))),
-      rBIAS_upper = mean(IPE) +( qt(0.975, df = length(IPE) - 1) *(sd(IPE) / sqrt(length(IPE)))),
+      rBIAS_lower = mean(IPE) - ci_half_width(IPE),
+      rBIAS_upper = mean(IPE) + ci_half_width(IPE),
       MAIPE= mean(APE),
       rRMSE= sqrt(mean(RMSE)) *100,
       IF20= sum(abs(IPE) <= 20) *100 / length(IPE),
